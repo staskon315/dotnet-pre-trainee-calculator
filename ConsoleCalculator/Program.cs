@@ -6,7 +6,7 @@
         Console.WriteLine("Hi, this is a console calculator");
         Console.WriteLine("If you want to terminate the program at any time, enter 'exit'");
         bool exit=false;
-        double num1=0,num2=0;
+        decimal num1=0,num2=0;
         while (!exit)   
         {
             Console.Write("Select one of the following operations (+, -, *, /, history or exit): ");
@@ -26,22 +26,23 @@
             ReadNumber(ref exit,ref num2);  
             if(exit) break;
             
-            CalculateAndPrint( operation, num1, num2);
+            CalculateAndPrint(operation, num1, num2);
+            AskToContinue(ref exit);
         }
     }
 
-    private static void ReadNumber(ref bool exit, ref double num)
+    private static void ReadNumber(ref bool exit, ref decimal num)
     {
         string str=Console.ReadLine() ?? "";
         if(CheckExit( str,ref exit)) return;
 
-        bool transform=double.TryParse(str,out num);
+        bool transform=decimal.TryParse(str,out num);
         while (!transform)
         {
             Console.Write("Invalid data entered. Please try again. ");
             str=Console.ReadLine() ?? "";
             if(CheckExit( str,ref exit)) break;
-            transform=double.TryParse(str,out  num);
+            transform=decimal.TryParse(str,out  num);
         }      
     }
     private static string ReadOperation(ref bool exit)
@@ -59,7 +60,7 @@
         }
         return operation;
     }
-    private static void CalculateAndPrint( string operation, double num1, double num2)
+    private static void CalculateAndPrint( string operation, decimal num1, decimal num2)
     {
         string? result=null;
         switch (operation)
@@ -85,7 +86,7 @@
         if (result != null)
         {
              Console.WriteLine(result);
-            history.Add(result?? "");
+            history.Add(result);
         }
     }
     private static bool CheckExit( string str,ref bool exit)
@@ -99,10 +100,30 @@
     }
     private static void ShowHistory()
     {
-        if(history.Count()==0) Console.WriteLine("Your history is currently empty.");
+        if (history.Count() == 0)
+        {
+            Console.WriteLine("Your history is currently empty.");
+            return;
+        }
         foreach(string part in history)
         {
             Console.WriteLine(part);
         }
+    }
+    private static void AskToContinue(ref bool exit)
+    {
+        Console.WriteLine("Would you like to perform another calculation? (y/n)");
+        string ?answer =Console.ReadLine()?? "";
+        while(answer != "y" && answer != "n" )
+        {
+            Console.Write("Invalid data entered. Please try again. ");
+            answer =Console.ReadLine()?? "";
+        }
+        if (answer == "n"|| answer=="exit")
+        {
+            Console.WriteLine("Program termination");
+            exit=true;
+        } 
+   
     }
 }
